@@ -144,6 +144,8 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
   const [ready, setReady] = useState(false);
   const prevWeekShifts = useRef<Shift[]>([]);
 
+  const apiUrl = (path: string) => (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL + path : path);
+
   // Move weekStart and weekEnd here so all useEffects below can use them safely
   const weekStart = useMemo(() => {
     const d = getStartOfWeek(currentWeek)
@@ -172,7 +174,7 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
     setFinalizedLoaded(false);
     const fetchFinalized = async () => {
       const weekStartStr = weekStart.toISOString().split('T')[0];
-      const res = await fetch(`/api/finalized?weekStart=${weekStartStr}`);
+      const res = await fetch(apiUrl(`/api/finalized?weekStart=${weekStartStr}`));
       if (res.ok) {
         const data = await res.json();
         setFinalizedEmployees(data.map((f: any) => String(f.employeeId)));
@@ -195,7 +197,7 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
 
   useEffect(() => {
     if (!branchId) return;
-    fetch(`/api/branches/${branchId}/employees`)
+    fetch(apiUrl(`/api/branches/${branchId}/employees`))
       .then((res) => res.json())
       .then((data) => {
         // Transform backend data to match frontend interface
@@ -229,7 +231,7 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
 
   useEffect(() => {
     if (!branchId) return;
-    fetch(`/api/branches/${branchId}`)
+    fetch(apiUrl(`/api/branches/${branchId}`))
       .then((res) => res.json())
       .then((data) => {
         setBranchInfo({ name: data.name, location: data.location, maxHoursPerDay: data.maxHoursPerDay });
@@ -241,7 +243,7 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
 
   useEffect(() => {
     if (lastMessage?.type === 'BRANCH_SETTINGS_UPDATED' && lastMessage.data?.branchId === branchId) {
-      fetch(`/api/branches/${branchId}`)
+      fetch(apiUrl(`/api/branches/${branchId}`))
         .then((res) => res.json())
         .then((data) => {
           setBranchInfo({ name: data.name, location: data.location, maxHoursPerDay: data.maxHoursPerDay });
@@ -257,7 +259,7 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
     if (!lastMessage) return;
     if (lastMessage.type === 'finalized_deleted' || lastMessage.type === 'finalized_added') {
       const weekStartStr = weekStart.toISOString().split('T')[0];
-      fetch(`/api/finalized?weekStart=${weekStartStr}`)
+      fetch(apiUrl(`/api/finalized?weekStart=${weekStartStr}`))
         .then(res => res.ok ? res.json() : [])
         .then(data => setFinalizedEmployees(data.map((f: any) => String(f.employeeId))));
     }
@@ -596,10 +598,10 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
       if (isFinal) {
         const weekStartStr = weekStart.toISOString().split('T')[0];
         console.log('DEBUG: removeShift auto-unfinalize (any shift)', { employeeId: shiftToRemove.employeeId, weekStart: weekStartStr });
-        fetch(`/api/finalized?employeeId=${shiftToRemove.employeeId}&weekStart=${weekStartStr}`, {
+        fetch(apiUrl(`/api/finalized?employeeId=${shiftToRemove.employeeId}&weekStart=${weekStartStr}`), {
           method: 'DELETE',
         }).then(() => {
-          fetch(`/api/finalized?weekStart=${weekStartStr}`)
+          fetch(apiUrl(`/api/finalized?weekStart=${weekStartStr}`))
             .then(res => res.ok ? res.json() : [])
             .then(data => {
               setFinalizedEmployees(data.map((f: any) => String(f.employeeId)));
@@ -693,12 +695,12 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
       const weekStartStr = weekStart.toISOString().split('T')[0];
       console.log('DEBUG: auto-finalize check', { employeeId: employee.id, fullyScheduled, isFinal });
       if (fullyScheduled && !isFinal) {
-        fetch('/api/finalized', {
+        fetch(apiUrl('/api/finalized'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ employeeId: employee.id, weekStart: weekStartStr }),
         }).then(() => {
-          fetch(`/api/finalized?weekStart=${weekStartStr}`)
+          fetch(apiUrl(`/api/finalized?weekStart=${weekStartStr}`))
             .then(res => res.ok ? res.json() : [])
             .then(data => {
               setFinalizedEmployees(data.map((f: any) => String(f.employeeId)));
@@ -707,10 +709,10 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
         });
       } else if (!fullyScheduled && isFinal) {
         console.log('DEBUG: auto-unfinalize', { employeeId: employee.id, weekStart: weekStartStr });
-        fetch(`/api/finalized?employeeId=${employee.id}&weekStart=${weekStartStr}`, {
+        fetch(apiUrl(`/api/finalized?employeeId=${employee.id}&weekStart=${weekStartStr}`), {
           method: 'DELETE',
         }).then(() => {
-          fetch(`/api/finalized?weekStart=${weekStartStr}`)
+          fetch(apiUrl(`/api/finalized?weekStart=${weekStartStr}`))
             .then(res => res.ok ? res.json() : [])
             .then(data => {
               setFinalizedEmployees(data.map((f: any) => String(f.employeeId)));
@@ -725,14 +727,14 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
   // When finalizing, POST to backend and re-fetch finalized state on success
   const handleFinalize = async (employee: Employee) => {
     const weekStartStr = weekStart.toISOString().split('T')[0];
-    const res = await fetch('/api/finalized', {
+    const res = await fetch(apiUrl('/api/finalized'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ employeeId: employee.id, weekStart: weekStartStr }),
     });
     if (res.ok) {
       // Re-fetch finalized state from backend to ensure UI is always in sync
-      const getRes = await fetch(`/api/finalized?weekStart=${weekStartStr}`);
+      const getRes = await fetch(apiUrl(`/api/finalized?weekStart=${weekStartStr}`));
       if (getRes.ok) {
         const data = await getRes.json();
         setFinalizedEmployees(data.map((f: any) => String(f.employeeId)));
