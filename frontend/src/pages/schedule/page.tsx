@@ -23,6 +23,8 @@ import {
 import { Link } from "react-router-dom"
 import { useWebSocket } from "@/hooks/use-websocket";
 
+const apiUrl = (path: string) => (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL + path : path);
+
 interface Branch {
   id: string
   name: string
