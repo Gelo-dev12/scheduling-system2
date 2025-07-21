@@ -66,7 +66,7 @@ export default function SchedulePage() {
   useEffect(() => {
     fetch("/api/branches")
       .then(res => res.json())
-      .then(data => setBranches(data.map((b: Branch) => ({ ...b, id: String(b.id || b._id) }))))
+      .then(data => setBranches(data.map((b: any) => ({ ...b, id: String(b.id ?? b._id) }))))
       .catch(() => setBranches([]))
   }, [])
 
