@@ -85,7 +85,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
   // Fetch branch info and employees for the branch
   const fetchBranchAndEmployees = () => {
     if (!branchId) return;
-    fetch(apiUrl(`/branches/${branchId}`))
+    fetch(apiUrl(`/api/branches/${branchId}`))
       .then(res => res.json())
       .then(branch => {
         setBranchName(branch.name || branchId)
@@ -101,7 +101,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
         setRegularMaxHoursPerWeek(40)
         setBranchRoles([])
       })
-    fetch(apiUrl(`/branches/${branchId}/employees`))
+    fetch(apiUrl(`/api/branches/${branchId}/employees`))
       .then(res => res.json())
       .then(data => {
         // Patch employees to include branchId and branchName for frontend filtering
@@ -158,7 +158,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
       branchId: branchId // Ensure this is sent
     };
     console.log("AddEmployee payload:", payload);
-    fetch(apiUrl(`/branches/${branchId}/employees`), {
+    fetch(apiUrl(`/api/branches/${branchId}/employees`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -214,7 +214,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
     setEditingEmployee(null)
 
     // Fetch fresh employees list from backend after edit
-    fetch(apiUrl(`/branches/${branchId}/employees`))
+    fetch(apiUrl(`/api/branches/${branchId}/employees`))
       .then(res => res.json())
       .then(data => {
         setEmployees(data.map((emp: Employee) => {
@@ -294,14 +294,14 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
     }));
 
     // Save to backend
-    const res = await fetch(apiUrl('/employees/bulk-update-hours'), {
+    const res = await fetch(apiUrl('/api/employees/bulk-update-hours'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ updates })
     });
 
     // Save branch settings
-    const branchRes = await fetch(apiUrl(`/branches/${branchId}/settings`), {
+    const branchRes = await fetch(apiUrl(`/api/branches/${branchId}/settings`), {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -312,7 +312,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
 
     if (res.ok && branchRes.ok) {
       // Fetch updated employees from backend
-      fetch(apiUrl(`/branches/${branchId}/employees`))
+      fetch(apiUrl(`/api/branches/${branchId}/employees`))
         .then(res => res.json())
         .then(data => {
           setEmployees(data.map((emp: Employee) => {
@@ -342,7 +342,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
   const handleDeleteBranch = async () => {
     setDeleting(true)
     try {
-      const res = await fetch(apiUrl(`/branches/${branchId}`), { method: 'DELETE' })
+      const res = await fetch(apiUrl(`/api/branches/${branchId}`), { method: 'DELETE' })
       if (res.ok) {
         navigate('/')
       } else {
@@ -869,22 +869,4 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
                 <Button variant="outline" onClick={() => setDeletingEmployee(null)} disabled={isDeleting}>Cancel</Button>
                 <Button variant="destructive" onClick={async () => {
                   setIsDeleting(true);
-                  const res = await fetch(apiUrl(`/employees/${deletingEmployee.id || deletingEmployee.id}`), { method: 'DELETE' });
-                  if (res.ok) {
-                    setEmployees(prev => prev.filter(e => (e.id || e.id) !== (deletingEmployee.id || deletingEmployee.id)));
-                    setDeletingEmployee(null);
-                  } else {
-                    toast({ title: "Error", description: "Failed to delete employee" });
-                  }
-                  setIsDeleting(false);
-                }} disabled={isDeleting}>
-                  {isDeleting ? 'Deleting...' : 'Delete'}
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
-    </div>
-  )
-}
+                  const res = await fetch(apiUrl(`/api/employees/${deletingEmployee.id || deletingEmployee.id}`
