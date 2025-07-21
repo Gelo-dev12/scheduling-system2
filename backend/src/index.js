@@ -32,8 +32,9 @@ const allowedOrigins = [
 
 const io = new Server(server, {
   cors: {
-    origin: allowedOrigins,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true
   }
 });
 app.set('io', io);
@@ -43,7 +44,7 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: allowedOrigins,
+  origin: '*',
   credentials: true
 }));
 app.use(morgan('combined'));
