@@ -104,16 +104,10 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
       .then(data => {
         // Patch employees to include branchId and branchName for frontend filtering
         setEmployees(data.map((emp: Employee) => {
-          let branchIdValue = branchId;
-          let branchNameValue = branchName || "";
-          if (emp.branch && typeof emp.branch === 'object') {
-            branchIdValue = emp.branch._id || branchId;
-            branchNameValue = emp.branch.name ? `${emp.branch.name}${emp.branch.location ? ' - ' + emp.branch.location : ''}` : branchNameValue;
-          }
           return {
             ...emp,
-            branchId: branchIdValue,
-            branchName: branchNameValue,
+            branchId: emp.branchId,
+            branchName: emp.branchName,
           };
         }))
       })
