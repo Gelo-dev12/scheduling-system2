@@ -215,17 +215,11 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
     fetch(`/api/branches/${branchId}/employees`)
       .then(res => res.json())
       .then(data => {
-        let branchIdValue = branchId;
-        let branchNameValue = branchName || "";
         setEmployees(data.map((emp: Employee) => {
-          if (emp.branch && typeof emp.branch === 'object') {
-            branchIdValue = emp.branch._id || branchId;
-            branchNameValue = emp.branch.name ? `${emp.branch.name}${emp.branch.location ? ' - ' + emp.branch.location : ''}` : branchNameValue;
-          }
           return {
             ...emp,
-            branchId: branchIdValue,
-            branchName: branchNameValue,
+            branchId: emp.branchId,
+            branchName: emp.branchName,
           };
         }))
       })
@@ -320,16 +314,10 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
         .then(res => res.json())
         .then(data => {
           setEmployees(data.map((emp: Employee) => {
-            let branchIdValue = branchId;
-            let branchNameValue = branchName || "";
-            if (emp.branch && typeof emp.branch === 'object') {
-              branchIdValue = emp.branch._id || branchId;
-              branchNameValue = emp.branch.name ? `${emp.branch.name}${emp.branch.location ? ' - ' + emp.branch.location : ''}` : branchNameValue;
-            }
             return {
               ...emp,
-              branchId: branchIdValue,
-              branchName: branchNameValue,
+              branchId: emp.branchId,
+              branchName: emp.branchName,
             };
           }))
         })
@@ -700,7 +688,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
         onOpenChange={setShowEditEmployee}
         employee={editingEmployee}
         availableBranches={[]}
-        onSubmit={(updatedEmployee) => handleEditEmployee(updatedEmployee)}
+        onSubmit={(updatedEmployee) => handleEditEmployee({ ...updatedEmployee, id: editingEmployee?.id || '' })}
         branchRoles={branchRoles}
       />
 
