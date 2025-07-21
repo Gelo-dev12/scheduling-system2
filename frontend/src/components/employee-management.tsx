@@ -74,6 +74,8 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
   const [isDeleting, setIsDeleting] = useState(false)
   const { lastMessage, sendMessage } = useWebSocket();
 
+  const apiUrl = (path: string) => (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL + path : path);
+
   // Helper to compute days per week using latest state
   const computeDaysPerWeek = (hoursPerWeek: number, maxHoursPerDay: number) => {
     const safeMaxHoursPerDay = Number(maxHoursPerDay) > 0 ? Number(maxHoursPerDay) : 1;
@@ -83,7 +85,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
   // Fetch branch info and employees for the branch
   const fetchBranchAndEmployees = () => {
     if (!branchId) return;
-    fetch(`/api/branches/${branchId}`)
+    fetch(apiUrl(`/branches/${branchId}`))
       .then(res => res.json())
       .then(branch => {
         setBranchName(branch.name || branchId)
@@ -99,7 +101,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
         setRegularMaxHoursPerWeek(40)
         setBranchRoles([])
       })
-    fetch(`/api/branches/${branchId}/employees`)
+    fetch(apiUrl(`/branches/${branchId}/employees`))
       .then(res => res.json())
       .then(data => {
         // Patch employees to include branchId and branchName for frontend filtering
@@ -156,7 +158,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
       branchId: branchId // Ensure this is sent
     };
     console.log("AddEmployee payload:", payload);
-    fetch(`/api/branches/${branchId}/employees`, {
+    fetch(apiUrl(`/branches/${branchId}/employees`), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -212,7 +214,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
     setEditingEmployee(null)
 
     // Fetch fresh employees list from backend after edit
-    fetch(`/api/branches/${branchId}/employees`)
+    fetch(apiUrl(`/branches/${branchId}/employees`))
       .then(res => res.json())
       .then(data => {
         setEmployees(data.map((emp: Employee) => {
@@ -292,14 +294,14 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
     }));
 
     // Save to backend
-    const res = await fetch('/api/employees/bulk-update-hours', {
+    const res = await fetch(apiUrl('/employees/bulk-update-hours'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ updates })
     });
 
     // Save branch settings
-    const branchRes = await fetch(`/api/branches/${branchId}/settings`, {
+    const branchRes = await fetch(apiUrl(`/branches/${branchId}/settings`), {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -310,7 +312,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
 
     if (res.ok && branchRes.ok) {
       // Fetch updated employees from backend
-      fetch(`/api/branches/${branchId}/employees`)
+      fetch(apiUrl(`/branches/${branchId}/employees`))
         .then(res => res.json())
         .then(data => {
           setEmployees(data.map((emp: Employee) => {
@@ -340,7 +342,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
   const handleDeleteBranch = async () => {
     setDeleting(true)
     try {
-      const res = await fetch(`/api/branches/${branchId}`, { method: 'DELETE' })
+      const res = await fetch(apiUrl(`/branches/${branchId}`), { method: 'DELETE' })
       if (res.ok) {
         navigate('/')
       } else {
@@ -867,7 +869,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
                 <Button variant="outline" onClick={() => setDeletingEmployee(null)} disabled={isDeleting}>Cancel</Button>
                 <Button variant="destructive" onClick={async () => {
                   setIsDeleting(true);
-                  const res = await fetch(`/api/employees/${deletingEmployee.id || deletingEmployee.id}`, { method: 'DELETE' });
+                  const res = await fetch(apiUrl(`/employees/${deletingEmployee.id || deletingEmployee.id}`), { method: 'DELETE' });
                   if (res.ok) {
                     setEmployees(prev => prev.filter(e => (e.id || e.id) !== (deletingEmployee.id || deletingEmployee.id)));
                     setDeletingEmployee(null);

@@ -64,7 +64,7 @@ export default function SchedulePage() {
   // Fetch branches from backend
   const [branches, setBranches] = useState<Branch[]>([])
   useEffect(() => {
-    fetch("/api/branches")
+    fetch(apiUrl("/api/branches"))
       .then(res => res.json())
       .then(data => setBranches(data.map((b: any) => ({ ...b, id: String(b.id ?? b._id) }))))
       .catch(() => setBranches([]))
@@ -72,7 +72,7 @@ export default function SchedulePage() {
 
   const [shifts, setShifts] = useState<Shift[]>([])
   useEffect(() => {
-    fetch('/api/shifts')
+    fetch(apiUrl('/api/shifts'))
       .then(res => res.json())
       .then(data => setShifts(data))
       .catch(() => setShifts([]))
@@ -213,7 +213,7 @@ export default function SchedulePage() {
   const handleEditSave = async () => {
     if (!editShift) return;
     try {
-      const res = await fetch(`/api/shifts/${editShift.id}`, {
+      const res = await fetch(apiUrl(`/api/shifts/${editShift.id}`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editForm),
@@ -235,7 +235,7 @@ export default function SchedulePage() {
     if (!deleteShift) return;
     try {
       console.log('DEBUG: handleDelete called for shift', deleteShift);
-      const res = await fetch(`/api/shifts/${deleteShift.id}`, { method: 'DELETE' });
+      const res = await fetch(apiUrl(`/api/shifts/${deleteShift.id}`), { method: 'DELETE' });
       if (!res.ok) {
         alert('Failed to delete shift from server.');
         return;
@@ -251,21 +251,21 @@ export default function SchedulePage() {
         weekStartStr
       });
       // Fetch finalized for this week
-      fetch(`/api/finalized?weekStart=${weekStartStr}`)
+      fetch(apiUrl(`/api/finalized?weekStart=${weekStartStr}`))
         .then(res => res.ok ? res.json() : [])
         .then(data => {
           const finalizedIds = data.map((f: any) => String(f.employeeId));
           console.log('DEBUG: finalizedIds for week', weekStartStr, finalizedIds);
           if (finalizedIds.includes(deleteShift.employeeId)) {
             console.log('DEBUG: overview auto-unfinalize (any shift)', { employeeId: deleteShift.employeeId, weekStart: weekStartStr });
-            fetch(`/api/finalized?employeeId=${deleteShift.employeeId}&weekStart=${weekStartStr}`, {
+            fetch(apiUrl(`/api/finalized?employeeId=${deleteShift.employeeId}&weekStart=${weekStartStr}`), {
               method: 'DELETE',
             })
               .then(async (delRes) => {
                 const delText = await delRes.text();
                 console.log('DEBUG: overview finalized DELETE response', delText);
                 // Optionally, refetch or update UI here
-                fetch(`/api/finalized?weekStart=${weekStartStr}`)
+                fetch(apiUrl(`/api/finalized?weekStart=${weekStartStr}`))
                   .then(res2 => res2.ok ? res2.json() : [])
                   .then(data2 => {
                     console.log('DEBUG: overview finalized state after delete', data2);

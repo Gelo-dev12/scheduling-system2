@@ -29,10 +29,12 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const { resolvedTheme } = useTheme();
 
+  const apiUrl = (path: string) => (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL + path : path);
+
   // Fetch dashboard summary
   useEffect(() => {
     setLoading(true)
-    fetch("/api/dashboard/summary")
+    fetch(apiUrl("/api/dashboard/summary"))
       .then(res => res.json())
       .then(data => {
         setDashboard(data)
@@ -44,7 +46,7 @@ export default function Dashboard() {
   // Fetch branches
   const fetchBranches = () => {
     setBranchesLoading(true)
-    fetch("/api/branches")
+    fetch(apiUrl("/api/branches"))
       .then(res => res.json())
       .then(data => {
         console.log('Fetched branches:', data)
@@ -66,7 +68,7 @@ export default function Dashboard() {
     const fetchCounts = async () => {
       const updatedBranches = await Promise.all(
         branches.map(async (branch) => {
-          const res = await fetch(`/api/branches/${branch._id}/employees`);
+          const res = await fetch(apiUrl(`/api/branches/${branch._id}/employees`));
           const employees = await res.json();
           return { ...branch, employeeCount: employees.length };
         })
@@ -78,7 +80,7 @@ export default function Dashboard() {
 
   // Handle branch creation
   const handleAddBranch = (branchData: { name: string; location: string }) => {
-    fetch("/api/branches", {
+    fetch(apiUrl("/api/branches"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(branchData)
