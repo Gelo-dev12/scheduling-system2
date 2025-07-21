@@ -869,4 +869,22 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
                 <Button variant="outline" onClick={() => setDeletingEmployee(null)} disabled={isDeleting}>Cancel</Button>
                 <Button variant="destructive" onClick={async () => {
                   setIsDeleting(true);
-                  const res = await fetch(apiUrl(`/api/employees/${deletingEmployee.id || deletingEmployee.id}`
+                  const res = await fetch(apiUrl(`/api/employees/${deletingEmployee.id || deletingEmployee.id}`), { method: 'DELETE' });
+                  if (res.ok) {
+                    setEmployees(prev => prev.filter(e => (e.id || e.id) !== (deletingEmployee.id || deletingEmployee.id)));
+                    setDeletingEmployee(null);
+                  } else {
+                    toast({ title: "Error", description: "Failed to delete employee" });
+                  }
+                  setIsDeleting(false);
+                }} disabled={isDeleting}>
+                  {isDeleting ? 'Deleting...' : 'Delete'}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+    </div>
+  );
+}
