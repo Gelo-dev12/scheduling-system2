@@ -103,7 +103,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
       .then(res => res.json())
       .then(data => {
         // Patch employees to include branchId and branchName for frontend filtering
-        setEmployees(data.map(emp => {
+        setEmployees(data.map((emp: Employee) => {
           let branchIdValue = branchId;
           let branchNameValue = branchName || "";
           if (emp.branch && typeof emp.branch === 'object') {
@@ -223,7 +223,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
       .then(data => {
         let branchIdValue = branchId;
         let branchNameValue = branchName || "";
-        setEmployees(data.map(emp => {
+        setEmployees(data.map((emp: Employee) => {
           if (emp.branch && typeof emp.branch === 'object') {
             branchIdValue = emp.branch._id || branchId;
             branchNameValue = emp.branch.name ? `${emp.branch.name}${emp.branch.location ? ' - ' + emp.branch.location : ''}` : branchNameValue;
@@ -325,7 +325,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
       fetch(`/api/branches/${branchId}/employees`)
         .then(res => res.json())
         .then(data => {
-          setEmployees(data.map(emp => {
+          setEmployees(data.map((emp: Employee) => {
             let branchIdValue = branchId;
             let branchNameValue = branchName || "";
             if (emp.branch && typeof emp.branch === 'object') {
@@ -705,8 +705,8 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
         open={showEditEmployee}
         onOpenChange={setShowEditEmployee}
         employee={editingEmployee}
-        availableBranches={employees}
-        onSubmit={handleEditEmployee}
+        availableBranches={[]}
+        onSubmit={(updatedEmployee) => handleEditEmployee(updatedEmployee)}
         branchRoles={branchRoles}
       />
 

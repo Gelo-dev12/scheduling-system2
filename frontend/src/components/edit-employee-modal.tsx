@@ -97,7 +97,6 @@ export function EditEmployeeModal({
     if (employee) {
       onSubmit({
         ...formData,
-        id: employee.id,
         employmentType: formData.employmentType,
       })
       onOpenChange(false)

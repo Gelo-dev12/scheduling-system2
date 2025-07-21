@@ -1261,7 +1261,8 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
               <div className="flex gap-4 mt-6 justify-end">
                 <Button variant="outline" onClick={() => setPendingFinalize(null)}>No</Button>
                 <Button className="bg-teal-600 text-white" onClick={async () => {
-                  await handleFinalize(pendingFinalize);
+                  const emp = currentEmployees.find(e => e.id === pendingFinalize.id) || { id: pendingFinalize.id, name: pendingFinalize.name, role: '', hoursScheduled: 0, maxHours: 0, avatar: '', color: '', branchId: '', branchName: '', isAvailable: true, hoursPerWeek: 0, daysPerWeek: 0, employmentType: 'regular' };
+                  await handleFinalize(emp);
                   setPendingFinalize(null);
                 }}>Yes, Finalize</Button>
               </div>

@@ -33,7 +33,7 @@ export function useWebSocket(token?: string) {
     socket.on("disconnect", () => setIsConnected(false))
     socket.on("employee_added", (data) => setLastMessage({ type: "employee_added", data }))
     socket.on("role_updated", (data) => setLastMessage({ type: "role_updated", data }))
-    return () => socket.disconnect()
+    return () => { socket.disconnect(); };
   }, [token])
 
   const sendMessage = (msg: any) => {
