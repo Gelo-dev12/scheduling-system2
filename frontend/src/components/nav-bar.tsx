@@ -3,10 +3,22 @@ import { Button } from "@/components/ui/button"
 import { Home, Users, Calendar, Clock, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ModeToggle } from "@/components/mode-toggle"
+import { useEffect, useState } from "react"
 
 export function NavBar() {
   const location = useLocation()
   const pathname = location.pathname
+  const [employeesLink, setEmployeesLink] = useState("/employees")
+
+  useEffect(() => {
+    // Try to get the first branch id from localStorage (set by dashboard page)
+    const branches = JSON.parse(localStorage.getItem("branches") || "[]")
+    if (branches.length > 0 && branches[0]._id) {
+      setEmployeesLink(`/branch/${branches[0]._id}/employees`)
+    } else {
+      setEmployeesLink("/")
+    }
+  }, [])
 
   const navItems = [
     {
@@ -15,7 +27,7 @@ export function NavBar() {
       icon: Home,
     },
     {
-      href: "/employees",
+      href: employeesLink,
       label: "Employee",
       icon: Users,
     },
