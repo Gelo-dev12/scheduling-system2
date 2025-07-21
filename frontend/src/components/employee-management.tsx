@@ -697,6 +697,8 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
         onOpenChange={setShowAddEmployee}
         currentBranch={branchId && branchName && branchLocation ? { id: branchId, name: branchName, location: branchLocation } : undefined}
         onSubmit={handleAddEmployee}
+        currentRoles={branchRoles}
+        currentEmployees={employees}
       />
 
       <EditEmployeeModal
