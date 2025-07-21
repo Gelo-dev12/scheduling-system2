@@ -18,17 +18,21 @@ const { Server } = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
+const allowedOrigins = [
+  process.env.CORS_ORIGIN || 'http://localhost:5173',
+  'http://localhost:5173',
+  'http://localhost:5174', // allow Vite dev server on 5174
+  'http://localhost:8081',
+  'http://localhost:19006',
+  'exp://localhost:19000',
+  'http://192.168.1.100:8081',
+  'https://scheduling-system2-f7r1-git-main-bayanjag12-2322s-projects.vercel.app',
+  'https://scheduling-system2-f7r1-dnrp63gya-bayanjag12-2322s-projects.vercel.app'
+];
+
 const io = new Server(server, {
   cors: {
-    origin: [
-      process.env.CORS_ORIGIN || 'http://localhost:5173',
-      'http://localhost:5173',
-      'http://localhost:5174', // allow Vite dev server on 5174
-      'http://localhost:8081',
-      'http://localhost:19006',
-      'exp://localhost:19000',
-      'http://192.168.1.100:8081',
-    ],
+    origin: allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
   }
 });
@@ -39,15 +43,7 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: [
-    process.env.CORS_ORIGIN || 'http://localhost:5173',
-    'http://localhost:5173',
-    'http://localhost:5174', // allow Vite dev server on 5174
-    'http://localhost:8081',
-    'http://localhost:19006',
-    'exp://localhost:19000',
-    'http://192.168.1.100:8081',
-  ],
+  origin: allowedOrigins,
   credentials: true
 }));
 app.use(morgan('combined'));
