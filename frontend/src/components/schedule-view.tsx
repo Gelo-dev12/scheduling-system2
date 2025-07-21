@@ -908,7 +908,7 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
                   />
                 </div>
 
-                <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+                <Select value={selectedBranch} onValueChange={(val: string) => setSelectedBranch(String(val))}>
                   <SelectTrigger>
                     <Filter className="w-4 h-4 mr-2" />
                     <SelectValue />
@@ -1155,7 +1155,7 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
                                 </div>
                                 <div className="text-xs flex items-center gap-1">
                                   <span role="img" aria-label="location">📍</span>
-                                  {shift.branchLocation || shift.branchName || 'Unknown location'}
+                                  {shift.branchName || 'Unknown location'}
                                 </div>
                                 <div className="text-xs opacity-90">
                                   Break: {format12HourTime(bsh, bsm)} - {format12HourTime(beh, bem)}

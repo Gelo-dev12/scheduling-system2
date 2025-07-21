@@ -200,7 +200,7 @@ export default function SchedulePage() {
         : "Unknown Branch"
 
   // Helper to format time in 12-hour format
-  function format12HourTime(hhmm) {
+  function format12HourTime(hhmm: string) {
     if (!hhmm) return '';
     const [h, m] = hhmm.split(':').map(Number);
     const ampm = h >= 12 ? 'PM' : 'AM';
@@ -295,13 +295,13 @@ export default function SchedulePage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Select value={String(selectedBranch)} onValueChange={val => setSelectedBranch(String(val))}>
+            <Select value={String(selectedBranch)} onValueChange={(val: string) => setSelectedBranch(String(val))}>
               <SelectTrigger className="w-48">
                 <Building2 className="w-4 h-4 mr-2" />
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {branches.map((branch) => (
+                {branches.map((branch: Branch) => (
                   <SelectItem key={String(branch.id)} value={String(branch.id)}>
                     <div className="flex flex-col">
                       <span className="font-medium">{branch.name}</span>
@@ -750,7 +750,7 @@ export default function SchedulePage() {
                 type="time"
                 className="border rounded px-2 py-1 w-full"
                 value={editForm.startTime}
-                onChange={e => setEditForm(f => ({ ...f, startTime: e.target.value }))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm(f => ({ ...f, startTime: e.target.value }))}
               />
             </div>
             <div className="mb-3">
@@ -759,7 +759,7 @@ export default function SchedulePage() {
                 type="time"
                 className="border rounded px-2 py-1 w-full"
                 value={editForm.endTime}
-                onChange={e => setEditForm(f => ({ ...f, endTime: e.target.value }))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm(f => ({ ...f, endTime: e.target.value }))}
               />
             </div>
             <div className="mb-3">
@@ -768,7 +768,7 @@ export default function SchedulePage() {
                 type="text"
                 className="border rounded px-2 py-1 w-full"
                 value={editForm.role}
-                onChange={e => setEditForm(f => ({ ...f, role: e.target.value }))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditForm(f => ({ ...f, role: e.target.value }))}
               />
             </div>
             <div className="flex gap-2 justify-end">

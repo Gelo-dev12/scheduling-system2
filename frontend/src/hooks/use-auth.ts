@@ -17,7 +17,7 @@ interface AuthState {
 export const useAuth = create<AuthState>((set) => ({
   user: null,
   error: null,
-  login: async (email, password) => {
+  login: async (email: string, password: string) => {
     try {
       const response = await axios.post('http://192.168.1.56:3001/api/auth/login', {
         email,
