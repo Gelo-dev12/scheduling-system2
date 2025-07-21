@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import axios from 'axios';
 
 interface User {
@@ -14,7 +14,7 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuth = create<AuthState>((set) => ({
+export const useAuth = create<AuthState>((set: any) => ({
   user: null,
   error: null,
   login: async (email: string, password: string) => {

@@ -301,11 +301,11 @@ export default function SchedulePage() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {branches.map((branch: Branch) => (
-                  <SelectItem key={String(branch.id)} value={String(branch.id)}>
+                {branches.map((b: Branch) => (
+                  <SelectItem key={String(b.id)} value={String(b.id)}>
                     <div className="flex flex-col">
-                      <span className="font-medium">{branch.name}</span>
-                      <span className="text-xs text-gray-500">{branch.location}</span>
+                      <span className="font-medium">{b.name}</span>
+                      <span className="text-xs text-gray-500">{b.location}</span>
                     </div>
                   </SelectItem>
                 ))}

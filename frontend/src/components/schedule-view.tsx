@@ -521,7 +521,7 @@ export function ScheduleView({ branchId }: ScheduleViewProps) {
     setDraggedEmployee(null);
 
     // Show Undo toast
-    toast((t) => (
+    toast((t: any) => (
       <span>
         Shift added. <button
           style={{ color: '#0ea5e9', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}

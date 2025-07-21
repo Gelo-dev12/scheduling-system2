@@ -24,6 +24,8 @@ interface PendingRequest {
   status: "pending" | "approved" | "rejected" | "expired"
 }
 
+export type { PendingRequest };
+
 interface PendingRequestsPanelProps {
   requests: PendingRequest[]
   onApprove: (requestId: string) => void

@@ -213,7 +213,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
     }
 
     setEmployees(employees.map((employee) =>
-      (employee.id === updatedEmployee.id || employee._id === updatedEmployee.id) ? employeeWithBranchName : employee
+      (employee.id === updatedEmployee.id || employee.id === updatedEmployee.id) ? employeeWithBranchName : employee
     ))
     setEditingEmployee(null)
 
@@ -299,7 +299,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
   const saveBulkEdit = async () => {
     // Prepare updates for backend
     const updates = bulkEditData.map(emp => ({
-      employeeId: emp._id || emp.id, // Prefer _id if available
+      employeeId: emp.id, // Prefer _id if available
       hoursPerWeek: emp.employmentType === "regular" ? regularMaxHoursPerWeek : emp.hoursPerWeek
     }));
 
@@ -564,7 +564,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
                 hoursPerWeek = regularMaxHoursPerWeek;
               } else {
                 // Find the current value from bulkEditData for this employee
-                const bulkEditEmp = bulkEditData.find(e => (e.id || e._id) === (employee.id || employee._id));
+                const bulkEditEmp = bulkEditData.find(e => (e.id || e.id) === (employee.id || employee.id));
                 hoursPerWeek = bulkEditEmp ? bulkEditEmp.hoursPerWeek : employee.hoursPerWeek;
               }
             } else {
@@ -576,7 +576,7 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
             const daysDisplay = isNaN(days) ? '-' : days;
 
             return (
-              <Card key={employee.id || employee._id || `${employee.firstName}-${employee.lastName}-${index}`} className="hover:shadow-lg transition-shadow">
+              <Card key={employee.id || employee.id || `${employee.firstName}-${employee.lastName}-${index}`} className="hover:shadow-lg transition-shadow">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -883,9 +883,9 @@ export function EmployeeManagement({ branchId }: { branchId: string }) {
                 <Button variant="outline" onClick={() => setDeletingEmployee(null)} disabled={isDeleting}>Cancel</Button>
                 <Button variant="destructive" onClick={async () => {
                   setIsDeleting(true);
-                  const res = await fetch(`/api/employees/${deletingEmployee.id || deletingEmployee._id}`, { method: 'DELETE' });
+                  const res = await fetch(`/api/employees/${deletingEmployee.id || deletingEmployee.id}`, { method: 'DELETE' });
                   if (res.ok) {
-                    setEmployees(prev => prev.filter(e => (e.id || e._id) !== (deletingEmployee.id || deletingEmployee._id)));
+                    setEmployees(prev => prev.filter(e => (e.id || e.id) !== (deletingEmployee.id || deletingEmployee.id)));
                     setDeletingEmployee(null);
                   } else {
                     toast({ title: "Error", description: "Failed to delete employee" });
