@@ -120,7 +120,7 @@ export function Layout() {
       style={{
         "--sidebar-width": "16rem",
         "--sidebar-width-icon": "3.5rem",
-      }}
+      } as any}
       defaultOpen={true}
     >
       {/* Sidebar is now fixed and overlays content, not part of flex row */}
