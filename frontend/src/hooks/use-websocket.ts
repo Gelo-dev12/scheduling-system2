@@ -10,14 +10,12 @@ interface WebSocketMessage {
 }
 
 function getSocketUrl() {
-  // Use window.location.hostname for web, fallback to localhost
-  let host = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
-  // If running on mobile or emulator, allow override via env
-  const port = 3001;
-  // If you want to force a specific IP for mobile, set REACT_APP_SOCKET_HOST
-  const envHost = (typeof process !== 'undefined' && process.env.REACT_APP_SOCKET_HOST) || undefined;
-  if (envHost) host = envHost;
-  return `ws://${host}:${port}`;
+  // Use environment variable if set, otherwise use Render URL in production, localhost in dev
+  if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL;
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'ws://localhost:3001';
+  }
+  return 'wss://scheduling-system2.onrender.com';
 }
 
 export function useWebSocket(token?: string) {
